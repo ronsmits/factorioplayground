@@ -1,8 +1,11 @@
+import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
+import javafx.scene.control.ScrollPane
 import javafx.scene.control.TabPane.TabClosingPolicy.UNAVAILABLE
+import javafx.scene.layout.Background
 import javafx.scene.layout.BorderPane
 import javafx.scene.text.Text
 import tornadofx.*
-import java.util.*
 
 /**
  * Created by ronsmits on 19/05/16.
@@ -13,15 +16,16 @@ class mainView : View() {
     fun itemToMakeProperty() = getProperty(mainView::itemToMake)
     val orderTreeView: OrderTreeView by inject()
     val orderTableView: OrderSummaryView by inject()
-    val orderGraphView : OrderGraphView by inject()
+    val orderGraphView: OrderGraphView by inject()
+    val testView : TestView by inject()
 
 
     init {
         title = "Factorio calculator"
 
         with (root) {
-            prefWidth=800.0
-            prefHeight=600.0
+            prefWidth = 800.0
+            prefHeight = 600.0
             top {
                 menubar {
                     menu {
@@ -52,6 +56,7 @@ class mainView : View() {
 
                     tab("Tree", orderTreeView.root) { tabClosingPolicy = UNAVAILABLE }
                     tab("Shopping list", orderTableView.root) { tabClosingPolicy = UNAVAILABLE }
+                    tab("test", testView.root) { tabClosingPolicy = UNAVAILABLE }
                 }
             }
         }
@@ -63,36 +68,59 @@ class mainView : View() {
         var longestrow = 0
         recurseDrawMap(row = 0, order = order.order)
         drawmap.entries.forEach {
-            if(it.value.size>longest) {
+            if (it.value.size > longest) {
                 longest = it.value.size
                 longestrow = it.key
             }
 
         }
         println("longest is $longest in row $longestrow")
-        var totallength =0.0
+        var totallength = 0.0
         drawmap[longestrow]?.forEach {
             val text = Text(it.name)
             println("index = ${drawmap[longestrow]?.indexOf(it)}")
-            println("${it.name} is ${Math.ceil(text.layoutBounds.width)} long")
-            totallength+=Math.ceil(text.layoutBounds.width)+50
+            println("${it.name} is ${it.textLength} long")
+            totallength += Math.ceil(it.textLength) + 50
         }
         println("total length will be $totallength")
 
     }
 
-    private fun recurseDrawMap(row: Int, order: OrderPart, connectTo: Box?=null) {
+    private fun recurseDrawMap(row: Int, order: OrderPart, connectTo: Box? = null) {
         val element = Box(order.item, order.amount, connectTo)
-        if(drawmap.containsKey(row)){
+        if (drawmap.containsKey(row)) {
             drawmap[row]?.add(element)
         } else {
             drawmap.plusAssign(Pair(row, mutableListOf(element)))
         }
-        order.orders.forEach { recurseDrawMap(row+1, it, element) }
+        order.orders.forEach { recurseDrawMap(row + 1, it, element) }
     }
 }
 
-data class Box (val name : String, val amount : Int, val connectTo : Box?=null) {
-    var x : Int = 0
-    var y : Int = 0
+class TestView : View() {
+    override val root = ScrollPane()
+
+    init {
+        with(root){
+
+            val canvas = Canvas(800.0,600.0)
+            content=canvas
+            Box("test", 1).draw(canvas.graphicsContext2D)
+
+        }
+    }
+}
+
+data class Box(val name: String, val amount: Int, val connectTo: Box? = null) {
+    val textfield = Text(name)
+    val textLength = Math.ceil(textfield.layoutBounds.width)
+    var x: Double = 10.0
+    var y: Double = 10.0
+
+    fun draw(gc: GraphicsContext) {
+        with(gc) {
+            strokeRect(x, y, textLength + 10, textfield.layoutBounds.height + 10)
+            fillText(textfield.text, x + 5, y + 10)
+        }
+    }
 }
