@@ -1,9 +1,14 @@
+import com.sun.javafx.geom.RoundRectangle2D
+import javafx.geometry.Rectangle2D
+import javafx.geometry.VPos
+import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TabPane.TabClosingPolicy.UNAVAILABLE
 import javafx.scene.layout.Background
 import javafx.scene.layout.BorderPane
+import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import tornadofx.*
 
@@ -105,22 +110,38 @@ class TestView : View() {
 
             val canvas = Canvas(800.0,600.0)
             content=canvas
-            Box("test", 1).draw(canvas.graphicsContext2D)
+            val box = Box("first", 1)
+                    box.draw(gc=canvas.graphicsContext2D)
+            Box("second", 3, connectTo = box).draw(80.0, 80.0, gc=canvas.graphicsContext2D)
+            Box("third", 3, box).draw(40.0, 80.0, canvas.graphicsContext2D)
 
         }
     }
 }
 
-data class Box(val name: String, val amount: Int, val connectTo: Box? = null) {
+class Box(val name: String, val amount: Int, val connectTo: Box? = null) : Group(){
     val textfield = Text(name)
     val textLength = Math.ceil(textfield.layoutBounds.width)
-    var x: Double = 10.0
-    var y: Double = 10.0
+    var xPos: Double = 10.0
+    var yPos: Double = 10.0
 
-    fun draw(gc: GraphicsContext) {
+    fun connectPoint() :Pair<Double, Double>{
+        return Pair(xPos+(textfield.layoutBounds.width+6)/2, yPos+textfield.layoutBounds.height+6)
+    }
+
+    fun draw(x: Double=10.0, y: Double=10.0, gc: GraphicsContext) {
+        xPos=x
+        yPos=y
         with(gc) {
-            strokeRect(x, y, textLength + 10, textfield.layoutBounds.height + 10)
-            fillText(textfield.text, x + 5, y + 10)
+            textBaseline = VPos.TOP
+            strokeRoundRect(x, y, textLength+6, textfield.layoutBounds.height+6, 10.0, 10.0)
+            fillText(textfield.text, x+3, y+3)
+            if(connectTo!=null){
+                beginPath()
+                moveTo(x+(textLength+6)/2, y)
+                lineTo(connectTo.connectPoint().first, connectTo.connectPoint().second)
+                stroke()
+            }
         }
     }
 }
