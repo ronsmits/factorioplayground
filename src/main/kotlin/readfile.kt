@@ -8,7 +8,7 @@ import java.util.*
 val recipes = HashMap<String, Recipe>()
 val items = mutableMapOf<String, Item>()
 
-fun readDB() {
+fun oldreadDB() {
 
     val root = parse("/pack.json") as JsonObject
     parseItems(root.obj("item") as JsonObject)
@@ -29,13 +29,13 @@ private fun parseRecipes(recipeList: JsonObject) {
         val recipe = Recipe(recipeObject.string("name")!!, recipeObject.string("type")!!)
         recipes.put(recipe.name, recipe)
         (recipeObject.get("ingredients") as JsonObject).forEach {
-            val ingredient = makeIngredient(it.value as JsonObject)
+            val ingredient = makeOldIngredient(it.value as JsonObject)
             recipe.ingredients.add(ingredient)
         }
     }
 }
 
-private fun makeIngredient(ingredientObject: JsonObject): Ingredient {
+private fun makeOldIngredient(ingredientObject: JsonObject): Ingredient {
     val name = ingredientObject.string("1") ?: ingredientObject.string("name")
     val amount = ingredientObject.int("2") ?: ingredientObject.int("amount")
     val ingredient = Ingredient(name!!, amount!!)

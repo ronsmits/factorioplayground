@@ -3,7 +3,7 @@
  */
 
 fun main(args: Array<String>) {
-    readDB()
+    oldreadDB()
     val order=Order("logistic-robot", 2)
     order.getTotal()
     println(order.totals)
@@ -22,7 +22,7 @@ class Order(val item: String, val amount: Int=1) {
     private fun walkTheOrderPart(order: OrderPart) {
         if(totals[order.item]!=null){
             val newAmount = totals[order.item]!! + order.amount
-            totals.plusAssign(Pair(order.item, newAmount))
+            totals+=(Pair(order.item, newAmount))
         } else {
             totals[order.item]=order.amount
         }

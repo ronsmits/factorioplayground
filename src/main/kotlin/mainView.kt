@@ -142,6 +142,7 @@ class TestView : View() {
         drawmap.clear()
         canvas.graphicsContext2D.clearRect(0.0, 0.0, canvas.width, canvas.height)
         buildmap(order)
+        drawmap[0]?.get(0)?.calculate(10.0, 10.0)
 
     }
 }
@@ -170,6 +171,12 @@ class Box(val name: String, val amount: Int, val parent: Box? = null) : Group() 
         return Pair(xPos + (textLength + 6) / 2, yPos + textHeight + 6)
     }
 
+    fun calculate(x: Double=50.0, y: Double=50.0) {
+        var widthOfChildren = 0.0
+        kids.forEach { widthOfChildren+=it.textLength+6+50 }
+        println(widthOfChildren)
+
+    }
     fun draw(x: Double = 10.0, y: Double = 10.0, gc: GraphicsContext): Box {
 
         xPos = x

@@ -10,6 +10,6 @@ class FactorioApp : App() {
     override fun init() {
         super.init()
 //        importStylesheet("/material.css")
-        readDB()
+        oldreadDB()
     }
 }
