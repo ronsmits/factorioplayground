@@ -38,7 +38,7 @@ private fun parseRecipes(recipeList: JsonObject) {
 private fun makeOldIngredient(ingredientObject: JsonObject): Ingredient {
     val name = ingredientObject.string("1") ?: ingredientObject.string("name")
     val amount = ingredientObject.int("2") ?: ingredientObject.int("amount")
-    val ingredient = Ingredient(name!!, amount!!)
+    val ingredient = Ingredient(name!!, amount!!.toDouble())
     return ingredient
 }
 

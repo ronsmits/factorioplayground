@@ -1,5 +1,5 @@
+import javafx.application.Application
 import tornadofx.App
-import tornadofx.importStylesheet
 
 /**
  * Created by ronsmits on 19/05/16.
@@ -10,6 +10,11 @@ class FactorioApp : App() {
     override fun init() {
         super.init()
 //        importStylesheet("/material.css")
-        oldreadDB()
+        readData()
     }
+}
+
+fun main(args: Array<String>) {
+
+    Application.launch(FactorioApp::class.java, *args)
 }

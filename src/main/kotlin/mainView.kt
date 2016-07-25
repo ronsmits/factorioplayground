@@ -1,3 +1,4 @@
+import javafx.collections.FXCollections
 import javafx.geometry.VPos
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
@@ -37,6 +38,9 @@ class mainView : View() {
                     }
                     hbox {
                         textfield().bind(itemToMakeProperty())
+                        combobox<String>(values = FXCollections.observableArrayList(items.keys.toList())) {
+                            isEditable = true
+                        }
                         button {
                             text = "make"
                             setOnAction {
@@ -147,7 +151,7 @@ class TestView : View() {
     }
 }
 
-class Box(val name: String, val amount: Int, val parent: Box? = null) : Group() {
+class Box(val name: String, val amount: Double, val parent: Box? = null) : Group() {
     val textfield = Text("$name - $amount")
     val textLength: Double
         get() = Math.ceil(textfield.layoutBounds.width)

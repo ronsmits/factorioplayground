@@ -8,19 +8,19 @@ import tornadofx.column
  * overal, while the OrderTreeView only shows the totals per item.
  */
 class OrderSummaryView : View() {
-    override val root = TableView<Map.Entry<String, Int>>()
+    override val root = TableView<Map.Entry<String, Double>>()
 
     init {
         with(root) {
-            column("Title", Map.Entry<String, Int>::key)
-            column("Amount", Map.Entry<String, Int>::value)
+            column("Title", Map.Entry<String, Double>::key)
+            column("Amount", Map.Entry<String, Double>::value)
         }
     }
 
     fun updateTable(order: Order) {
 
         with(root) {
-            items = FXCollections.observableArrayList<Map.Entry<String, Int>>(order.getTotal().entries)
+            items = FXCollections.observableArrayList<Map.Entry<String, Double>>(order.getTotal().entries)
         }
 
     }

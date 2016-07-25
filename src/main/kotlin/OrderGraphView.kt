@@ -14,7 +14,7 @@ class OrderGraphView : View() {
         println("}")
     }
 
-    private fun addLegend(totals: MutableMap<String, Int>) {
+    private fun addLegend(totals: MutableMap<String, Double>) {
         totals.entries.forEach {
             println("${it.key.replace("-", "")} [shape=box label=\"${it.key.replace("-", " ")}\\n${it.value}\"]")
         }
