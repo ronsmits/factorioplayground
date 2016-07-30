@@ -4,6 +4,9 @@ import tornadofx.App
 /**
  * Created by ronsmits on 19/05/16.
  */
+
+val recipes = mutableMapOf<String, Recipe>()
+val items = mutableMapOf<String, Item>()
 class FactorioApp : App() {
     override val primaryView = mainView::class
 

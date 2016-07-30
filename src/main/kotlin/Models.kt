@@ -3,7 +3,7 @@
  */
 
 fun main(args: Array<String>) {
-    oldreadDB()
+    readData()
     val order=Order("logistic-robot", 2.0)
     order.getTotal()
     println(order.totals)
@@ -35,12 +35,13 @@ class Order(val item: String, val amount: Double=1.0) {
 class OrderPart(val item: String, val amount: Double) {
     val orders = mutableListOf<OrderPart>()
     val recipe: Recipe?
-
+    var realamount =amount
     init {
         recipe = recipes[item]
         if (recipe != null) {
             recipe.ingredients.forEach {
-                orders.add(OrderPart(it.name, amount * (it.amount / recipe.result_count)))
+                if(realamount < recipe.result_count) realamount = recipe.result_count
+                orders.add(OrderPart(it.name, realamount * (it.amount / recipe.result_count)))
             }
         }
     }
@@ -57,6 +58,10 @@ class Item(name: String, group: String, val stacksize: Int, type:String="item", 
     override fun toString(): String = "$name - $stacksize - $group - $type - $icon"
 }
 
+class Assembler(name: String, group: String, type:String="assembler"):BaseElement(name, type, group) {
+    override fun toString() = "$name - $type - $group"
+}
+
 class Ingredient(var name: String="", var amount: Double=0.0){
     val recipes = mutableListOf<Ingredient>()
 
@@ -64,7 +69,7 @@ class Ingredient(var name: String="", var amount: Double=0.0){
 
 }
 
-class Recipe(name: String, type: String="recipe", group: String="undefined") : BaseElement(name, type, group) {
+class Recipe(name: String, type: String="recipe", group: String="undefined", time : Int=1) : BaseElement(name, type, group) {
     val ingredients = mutableListOf<Ingredient>()
     var result_count : Double = 1.0
 

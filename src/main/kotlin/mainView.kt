@@ -16,6 +16,8 @@ class mainView : View() {
     override val root = BorderPane()
     var itemToMake by property<String>()
     fun itemToMakeProperty() = getProperty(mainView::itemToMake)
+    var amountToMake by property<Int>()
+    fun amountToMakeProperty() = getProperty(mainView::amountToMake)
     val orderTreeView: OrderTreeView by inject()
     val orderTableView: OrderSummaryView by inject()
     val orderGraphView: OrderGraphView by inject()
@@ -23,12 +25,14 @@ class mainView : View() {
 
 
     init {
+        amountToMake = 1
         title = "Factorio calculator"
 
-        with (root) {
+        with(root) {
             prefWidth = 800.0
             prefHeight = 600.0
-            top {
+
+            top = vbox {
                 menubar {
                     menu {
                         text = "File"
@@ -38,15 +42,15 @@ class mainView : View() {
                     }
                     hbox {
                         textfield().bind(itemToMakeProperty())
-                        combobox<String>(values = FXCollections.observableArrayList(items.keys.toList())) {
-                            isEditable = true
-                        }
+                        label("amount")
+                        textfield().bind(amountToMakeProperty())
                         button {
                             text = "make"
                             setOnAction {
                                 println(itemToMake)
+                                println(amountToMake)
                                 val make = itemToMake.replace(" ", "-")
-                                val order = Order(make)
+                                val order = Order(make, amountToMake.toDouble())
                                 orderTreeView.updateTreeTable(order.order)
                                 orderTableView.updateTable(order)
                                 orderGraphView.updateGraph(order)
@@ -56,18 +60,13 @@ class mainView : View() {
                     }
                 }
             }
-            center {
-                tabpane {
-
-                    tab("Tree", orderTreeView.root) { tabClosingPolicy = UNAVAILABLE }
-                    tab("Shopping list", orderTableView.root) { tabClosingPolicy = UNAVAILABLE }
-                    tab("test", testView.root) { tabClosingPolicy = UNAVAILABLE }
-                }
-            }
+            center = tabpane {
+                        tab("Tree", orderTreeView.root) { tabClosingPolicy = UNAVAILABLE }
+                        tab("Shopping list", orderTableView.root) { tabClosingPolicy = UNAVAILABLE }
+                        tab("test", testView.root) { tabClosingPolicy = UNAVAILABLE }
+                    }
         }
     }
-
-
 }
 
 
@@ -105,7 +104,7 @@ class TestView : View() {
 
         val horizontalGap = 50.0
         val verticalGap = 75.0
-        val center = horizontalGap+totallength/2
+        val center = horizontalGap + totallength / 2
         drawmap.entries.forEach {
             println(it)
             val currentRow = it.key
@@ -114,8 +113,8 @@ class TestView : View() {
             it.value.forEach {
                 val index = drawmap[currentRow]?.indexOf(it) ?: 0
                 var y = currentRow * verticalGap
-                if (y==0.0) y=20.0
-                var x = center - rowlength/2
+                if (y == 0.0) y = 20.0
+                var x = center - rowlength / 2
                 if (index > 0) {
                     val leftbox = (drawmap[currentRow]?.get(index - 1) as Box)
                     x = leftbox.textLength + leftbox.xPos + 6 + horizontalGap
@@ -125,10 +124,10 @@ class TestView : View() {
         }
     }
 
-    private fun calculateRowLength(value: MutableList<Box>, gap: Double=50.0): Double {
-        var totallength:Double=0.0
-        value.forEach { totallength+=it.textLength+6+gap }
-        totallength-gap
+    private fun calculateRowLength(value: MutableList<Box>, gap: Double = 50.0): Double {
+        var totallength: Double = 0.0
+        value.forEach { totallength += it.textLength + 6 + gap }
+        totallength - gap
         return totallength
     }
 
@@ -160,13 +159,14 @@ class Box(val name: String, val amount: Double, val parent: Box? = null) : Group
     var xPos: Double = 10.0
     var yPos: Double = 10.0
 
-    private val kids= mutableListOf<Box>()
+    private val kids = mutableListOf<Box>()
 
     init {
-        if(parent !=null) {
+        if (parent != null) {
             parent.kids.add(this)
         }
     }
+
     /**
      * Return the bottom center of the box. This can be used to draw lines between boxes
      * in the returned Pair <code>first</code> is the x coordinate, <code>second</code> is the y coordinate
@@ -175,12 +175,13 @@ class Box(val name: String, val amount: Double, val parent: Box? = null) : Group
         return Pair(xPos + (textLength + 6) / 2, yPos + textHeight + 6)
     }
 
-    fun calculate(x: Double=50.0, y: Double=50.0) {
+    fun calculate(x: Double = 50.0, y: Double = 50.0) {
         var widthOfChildren = 0.0
-        kids.forEach { widthOfChildren+=it.textLength+6+50 }
+        kids.forEach { widthOfChildren += it.textLength + 6 + 50 }
         println(widthOfChildren)
 
     }
+
     fun draw(x: Double = 10.0, y: Double = 10.0, gc: GraphicsContext): Box {
 
         xPos = x
@@ -190,8 +191,8 @@ class Box(val name: String, val amount: Double, val parent: Box? = null) : Group
             textBaseline = VPos.TOP
             strokeRoundRect(x, y, textLength + 6, textHeight + 6, 10.0, 10.0)
             fillText(textfield.text, x + 3, y + 3)
-            if(parent?.kids?.size==1) {
-               // parent?.redraw(x,  gc)
+            if (parent?.kids?.size == 1) {
+                // parent?.redraw(x,  gc)
             }
         }
         return this
@@ -202,18 +203,19 @@ class Box(val name: String, val amount: Double, val parent: Box? = null) : Group
         draw(newX, yPos, gc)
 //        kids.forEach { it.redraw(newX, gc) }
     }
+
     private fun clear(gc: GraphicsContext): Box {
-        gc.clearRect(xPos, yPos, textLength+6, textHeight+7)
+        gc.clearRect(xPos, yPos, textLength + 6, textHeight + 7)
         return this
     }
 
     fun connect(gc: GraphicsContext): Box {
-        with (gc) {
+        with(gc) {
             if (parent != null) {
                 beginPath()
-                var xSource : Double = 0.0
-                var ySource : Double = 0.0
-                    xSource = xPos + (textLength + 6) / 2
+                var xSource: Double = 0.0
+                var ySource: Double = 0.0
+                xSource = xPos + (textLength + 6) / 2
                 moveTo(xSource, yPos)
                 lineTo(parent.connectPoint().first, parent.connectPoint().second)
                 stroke()
