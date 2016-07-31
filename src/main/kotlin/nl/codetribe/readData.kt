@@ -1,3 +1,12 @@
+package nl.codetribe
+
+import nl.codetribe.FactorioApp
+import nl.codetribe.items
+import nl.codetribe.models.Ingredient
+import nl.codetribe.models.Item
+import nl.codetribe.models.Order
+import nl.codetribe.models.Recipe
+import nl.codetribe.recipes
 import org.luaj.vm2.LuaTable
 import org.luaj.vm2.LuaValue
 import org.luaj.vm2.lib.jse.JsePlatform
@@ -11,9 +20,10 @@ var rawdata = LuaTable()
 
 fun readData() {
     val os = System.getProperty("os.name")
+    println(os)
     var packagePath : String
     when(os) {
-        "MacOS" -> {
+        "Mac OS X" -> {
             val lualib = File("/Applications/factorio.app/Contents/data/core/lualib/?.lua")
             val datalib = File("/Applications/factorio.app/Contents/data/base/?.lua")
             packagePath = "${lualib.absolutePath};${datalib.absolutePath}"
@@ -39,9 +49,9 @@ fun readData() {
     context.load("require 'data'").call()
     val data = context.get("data")
     rawdata = data.get("raw") as LuaTable
-//    (rawdata.get("technology") as LuaTable).keys().forEach { println("tech $it") }
+//    (nl.codetribe.getRawdata.get("technology") as LuaTable).keys().forEach { println("tech $it") }
     val ass = rawdata.get("assembling-machine") as LuaTable
-    ass.keys().map{key -> handleMachine(ass.get(key)as LuaTable)}
+    ass.keys().map{key -> handleMachine(ass.get(key)as LuaTable) }
     //(ass.get("assembling-machine-1") as LuaTable).keys().forEach { println("$it - ${(ass.get("assembling-machine-1")as LuaTable).get(it)}") }
     val rawRecipes: LuaTable = rawdata.get("recipe") as LuaTable
     val rawItems: LuaTable = rawdata.get("item") as LuaTable
@@ -51,8 +61,11 @@ fun readData() {
 
 }
 
-fun handleMachine(luaTable: LuaTable) {
-    println("working for ${luaTable.get("name")}")
+fun handleMachine(machine: LuaTable) {
+    println("working for ${machine.get("name")}")
+    machine.keys().forEach { println("\t$it - ${machine.get(it)}") }
+    val luaTable = machine.get("crafting_categories") as LuaTable
+    luaTable.keys().forEach { println("\\tt$it - ${luaTable.get(it)}") }
 }
 
 fun  handleItem(key: LuaValue?, rawitem: LuaTable) {
@@ -81,7 +94,6 @@ fun handleRecipe(key: LuaValue?, rawdata: LuaTable) {
         (results as LuaTable).keys().forEach { table ->
             (results.get(table) as LuaTable).keys().forEach { entry ->
                 if (entry.tojstring() == "amount") {
-                    println("\t\t${results.get(table).get(entry).todouble()}")
                     recipe.result_count = results.get(table).get(entry).todouble()
                 }
             }
@@ -90,7 +102,6 @@ fun handleRecipe(key: LuaValue?, rawdata: LuaTable) {
         recipe.result_count = if(rawrecipe.get("result_count").isnil()) 1.0 else rawrecipe.get("result_count").todouble()
     }
     recipes.put(recipe.name, recipe)
-    println(recipe)
 }
 
 fun makeIngredient(recipe: Recipe, luaTable: LuaTable) {
@@ -106,5 +117,5 @@ fun main(args: Array<String>) {
     readData()
 
     val order = Order("effectivity-module", 1.toDouble())
-    println(order)
+    //println(order)
 }

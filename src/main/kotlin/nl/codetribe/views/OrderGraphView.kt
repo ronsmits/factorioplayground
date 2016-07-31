@@ -1,4 +1,8 @@
+package nl.codetribe.views
+
 import javafx.scene.layout.BorderPane
+import nl.codetribe.models.Order
+import nl.codetribe.models.OrderPart
 import tornadofx.View
 
 /**

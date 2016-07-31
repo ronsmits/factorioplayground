@@ -1,4 +1,8 @@
+package nl.codetribe
+
 import javafx.application.Application
+import nl.codetribe.models.Item
+import nl.codetribe.models.Recipe
 import tornadofx.App
 
 /**

@@ -1,3 +1,5 @@
+package nl.codetribe
+
 import javafx.collections.FXCollections
 import javafx.geometry.VPos
 import javafx.scene.Group
@@ -7,7 +9,14 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TabPane.TabClosingPolicy.UNAVAILABLE
 import javafx.scene.layout.BorderPane
 import javafx.scene.text.Text
+import nl.codetribe.models.Item
+import nl.codetribe.models.Order
+import nl.codetribe.models.OrderPart
+import nl.codetribe.views.ItemTreeView
 import tornadofx.*
+import nl.codetribe.views.OrderGraphView
+import nl.codetribe.views.OrderSummaryView
+import nl.codetribe.views.OrderTreeView
 
 /**
  * Created by ronsmits on 19/05/16.
@@ -22,7 +31,7 @@ class mainView : View() {
     val orderTableView: OrderSummaryView by inject()
     val orderGraphView: OrderGraphView by inject()
     val testView: TestView by inject()
-
+    val itemtreeview : ItemTreeView by inject()
 
     init {
         amountToMake = 1
@@ -54,7 +63,7 @@ class mainView : View() {
                                 orderTreeView.updateTreeTable(order.order)
                                 orderTableView.updateTable(order)
                                 orderGraphView.updateGraph(order)
-                                testView.updateGraph(order)
+
                             }
                         }
                     }
@@ -63,11 +72,12 @@ class mainView : View() {
             center = tabpane {
                         tab("Tree", orderTreeView.root) { tabClosingPolicy = UNAVAILABLE }
                         tab("Shopping list", orderTableView.root) { tabClosingPolicy = UNAVAILABLE }
-                        tab("test", testView.root) { tabClosingPolicy = UNAVAILABLE }
+                        tab("item tree", itemtreeview.root) {tabClosingPolicy = UNAVAILABLE}
                     }
         }
     }
 }
+
 
 
 class TestView : View() {

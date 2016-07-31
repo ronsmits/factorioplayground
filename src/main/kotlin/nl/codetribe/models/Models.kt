@@ -1,10 +1,15 @@
+package nl.codetribe.models
+
+import nl.codetribe.readData
+import nl.codetribe.recipes
+
 /**
  * Created by ronsmits on 12/05/16.
  */
 
 fun main(args: Array<String>) {
     readData()
-    val order=Order("logistic-robot", 2.0)
+    val order= Order("logistic-robot", 2.0)
     order.getTotal()
     println(order.totals)
 }
@@ -51,15 +56,15 @@ class OrderPart(val item: String, val amount: Double) {
 }
 
 
-open class BaseElement (val name: String, val type: String, val group: String)
+open class BaseElement (val name: String, val type: String, val category: String)
 
-class Item(name: String, group: String, val stacksize: Int, type:String="item", val icon:String=""):BaseElement(name, type, group) {
+class Item(name: String, group: String, val stacksize: Int, type:String="item", val icon:String=""): BaseElement(name, type, group) {
 
-    override fun toString(): String = "$name - $stacksize - $group - $type - $icon"
+    override fun toString(): String = "$name - $stacksize - ${category} - $type - $icon"
 }
 
-class Assembler(name: String, group: String, type:String="assembler"):BaseElement(name, type, group) {
-    override fun toString() = "$name - $type - $group"
+class Assembler(name: String, group: String, type:String="assembler", val ingredientcount:Int, val speed:Double): BaseElement(name, type, group) {
+    override fun toString() = "$name - $type - ${category}"
 }
 
 class Ingredient(var name: String="", var amount: Double=0.0){
@@ -73,5 +78,5 @@ class Recipe(name: String, type: String="recipe", group: String="undefined", tim
     val ingredients = mutableListOf<Ingredient>()
     var result_count : Double = 1.0
 
-    override fun toString() = "$name - $type - $group - $result_count - $ingredients"
+    override fun toString() = "$name - $type - ${category} - $result_count - $ingredients"
 }

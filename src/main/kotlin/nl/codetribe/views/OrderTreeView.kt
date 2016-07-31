@@ -1,5 +1,8 @@
+package nl.codetribe.views
+
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
+import nl.codetribe.models.OrderPart
 import tornadofx.View
 import tornadofx.column
 import tornadofx.populate
@@ -12,7 +15,7 @@ class OrderTreeView : View() {
 
     init {
         with(root) {
-            column("Item", OrderPart::item)
+            column("nl.codetribe.models.Item", OrderPart::item)
             column("Amount", OrderPart::amount)
         }
     }
