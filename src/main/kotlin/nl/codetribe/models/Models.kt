@@ -1,6 +1,6 @@
 package nl.codetribe.models
 
-import nl.codetribe.readData
+import nl.codetribe.oldreadDB
 import nl.codetribe.recipes
 
 /**
@@ -8,7 +8,7 @@ import nl.codetribe.recipes
  */
 
 fun main(args: Array<String>) {
-    readData()
+    oldreadDB()
     val order= Order("logistic-robot", 2.0)
     order.getTotal()
     println(order.totals)
