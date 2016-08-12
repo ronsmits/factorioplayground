@@ -74,9 +74,10 @@ class Ingredient(var name: String="", var amount: Double=0.0){
 
 }
 
-class Recipe(name: String, type: String="recipe", group: String="undefined", time : Int=1) : BaseElement(name, type, group) {
+class Recipe(name: String, type: String="recipe", group: String="undefined", time : Int=1, val craftcategory:String="crafting") : BaseElement(name, type, group) {
     val ingredients = mutableListOf<Ingredient>()
     var result_count : Double = 1.0
+    var result_type : String = "item"
 
-    override fun toString() = "$name - $type - ${category} - $result_count - $ingredients"
+    override fun toString() = "$name - $type - ${category} - $result_count - $result_type - $craftcategory $ingredients"
 }

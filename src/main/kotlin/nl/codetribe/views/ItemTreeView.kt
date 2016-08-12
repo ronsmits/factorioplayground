@@ -9,22 +9,27 @@ import tornadofx.*
 /**
  * Created by ronsmits on 31/07/16.
  */
-class ItemTreeView : View(){
+class ItemTreeView : View() {
     override val root = VBox()
 
-    val groups = items.values.map { it.category }.distinct().map { println(it); Item(it, "", 1) }
+    val groups = items.values.map { it.category }.distinct().map { println(it); Item("${it}s", it, 1) }
 
     init {
-        println(groups)
-//        with (root) {
-//            treetableview<Item> {
-//                root = TreeItem(Item("Items", "", 1))
-//                column("name", Item::name)
-//                column("category", Item::category)
-//
-//                populate {parent -> if(parent == root) groups else items.values.filter{it.category == parent.value.name}}
-//
-//            }
-//        }
+        with(root) {
+            treetableview<Item> {
+                root = TreeItem(Item("Items", "", 1))
+                column("name", Item::name)
+                column("category", Item::category)
+
+                populate { parent ->
+                    if (parent == root) groups else {
+                        items.values.filter {
+                            it.category == parent.value.name
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }
